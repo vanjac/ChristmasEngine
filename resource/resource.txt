@@ -1,0 +1,106 @@
+# Resource config file for "A Christmas Miracle"
+# created by Jacob van't Hoog
+
+# Images:
+
+i sky						cartoon-sky-night.jpg
+i narwhal					o-NARWHAL-facebook.jpg
+i deadScreen				deadScreen.png
+
+i reindeer					unicornSmall.png
+n reindeerWidth				135
+n reindeerHeight			158
+
+i sleigh					santaSleigh.png
+n sleighWidth				225
+n sleighHeight				225
+
+i chimney					chimney.png
+n chimneyScale				0.18
+n chimneyYOffset			20
+
+n numRain					8
+i rain0						rain/rain1.gif
+i rain1						rain/rain2.gif
+i rain2						rain/rain3.gif
+i rain3						rain/rain4.gif
+i rain4						rain/rain5.gif
+i rain5						rain/rain6.gif
+i rain6						rain/rain7.gif
+i rain7						rain/rain8.gif
+
+n numPresents				6
+i present0					present/present1.png
+i present1					present/present2.png
+i present2					present/present3.png
+i present3					present/present4.png
+i present4					present/present5.png
+i present5					present/present6.png
+n presentScale				0.75
+
+n numHouses					12
+i house0					house/house1.png
+i house1					house/house2.png
+i house2					house/house3.png
+i house3					house/house4.png
+i house4					house/house5.png
+i house5					house/house6.png
+i house6					house/house7.png
+i house7					house/house8.png
+i house8					house/house9.png
+i house9					house/house10.png
+i house10					house/house11.png
+i house11					house/house12.png
+
+
+# Sounds
+
+a mainMusic					Scheming Weasel slower.mp3
+n mainMusicVolume			1
+a santaSound				hohoho.wav
+n santaSoundVolume			0.6
+n santaSoundMinDelay		12
+n santaSoundMaxDelay		24
+a rainSound					Rain Heavy Thunder.aif
+n rainVolume				0.3
+a presentLaunch				launch.wav
+n presentLaunchVolume		0.25
+a pointSound				success.wav
+n pointVolume				0.25
+a presentFallSound			fail.wav
+n presentFallVolume			0.1
+a collisionSound			bump.wav
+n collisionVolume			0
+
+
+# Game constants
+
+n jumpHeight				768
+n gravity					2048
+n box2dGravity				512
+n flySpeed					384
+n houseMoveSpeed			192
+
+n presentLaunchWaitTime		500
+n presentXVel				-256
+n presentYVel				512
+n presentDensity			1
+n presentFriction			0
+n presentRestitution		0.5
+
+n numReindeer				8
+n reindeerStartXRatio		0.75
+n reindeerFollowDelay		100
+n reindeerFollowDistance	150
+n sleighFollowDistance		195
+
+n lightningWaitFrames		256
+n lightningDisplayFrames	4
+
+n minChimneyDelay			0.75
+n maxChimneyDelay			3.0
+
+n presentPoints				100
+n fallPoints				50
+n speedRoundPoints			750
+n narwhalModePoints			1500
