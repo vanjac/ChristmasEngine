@@ -251,14 +251,20 @@ public class ChristmasGame extends GameApplet {
 		
 		switch (currentScreen) {
 		case START:
-			if(splashScreen == null)
+			if(splashScreen == null) {
+				System.out.println("Loading splash screen...");
 				splashScreen = loadImage(
 						RESOURCE_DIRECTORY.resolve("splashScreen.png")
 						.toString());
-			image(splashScreen, 0, 0, getCanvasWidth(), getCanvasHeight());
-			// loads the fonts so they will be ready
-			textSize(36);
-			super.prepareFont();
+				System.out.println("Splash screen loaded.");
+				image(splashScreen, 0, 0, getCanvasWidth(), getCanvasHeight());
+			} else if(!fontPrepared()) {
+				System.out.println("Preparing font...");
+				// loads the fonts so they will be ready
+				textSize(36);
+				super.prepareFont();
+				System.out.println("Font prepared.");
+			}
 			break;
 		case GAME:
 			gameFrame++;

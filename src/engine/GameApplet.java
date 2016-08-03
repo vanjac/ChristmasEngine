@@ -27,6 +27,8 @@ public abstract class GameApplet extends PApplet {
 	private static int smooth;
 	private static boolean startInDevMode = false;
 	
+	private static boolean fontPrepared = false;
+	
 	
 	protected SpriteGroup group;
 	protected GameRunner runner;
@@ -259,5 +261,10 @@ public abstract class GameApplet extends PApplet {
 	 */
 	protected void prepareFont() {
 		text(" ", 0, 0);
+		fontPrepared = true;
+	}
+	
+	protected boolean fontPrepared() {
+		return fontPrepared;
 	}
 }
