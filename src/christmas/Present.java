@@ -10,35 +10,31 @@ import org.jbox2d.dynamics.*;
 
 public class Present extends ImageSprite {
 	private final ChristmasGame game;
-	private final float screenHeight;
 	private final Box2DProcessing box2d;
+	private final ResourceManager resource;
+	private final float screenHeight;
+	
 	private Body body;
 	private final Sound fallSound;
 	private final int fallPoints;
 	
-	public Present(GameRunner run, Box2DProcessing box2d, ChristmasGame game,
-			float x, float y) {
+	public Present(GameRunner runner, Box2DProcessing box2d,
+			ChristmasGame game, float x, float y) {
 		super();
 		this.box2d = box2d;
 		this.game = game;
-		screenHeight = run.getApplet().getCanvasHeight();
-		ResourceManager resource = run.getResources();
+		resource = runner.getResources();
+		
+		screenHeight = runner.getApplet().getCanvasHeight();
+		this.x = x;
+		this.y = y;
 		
 		String imageName = "present" +
 				(int)(Math.random() * resource.getShort("numPresents"));
 		super.setImage(resource.getImage(imageName));
 		super.setScale(resource.getFloat("presentScale"));
 		
-		this.x = x;
-		this.y = y;
-		
-		makeBody(resource);
-		
-		float xVel = resource.getFloat("presentXVel");
-		float yVel = resource.getFloat("presentYVel");
-		body.setLinearVelocity(new Vec2(xVel, yVel));
-		
-		fallSound = resource.getSound("presentFallSound", run);
+		fallSound = resource.getSound("presentFallSound", runner);
 		fallSound.setVolume(resource.getFloat("presentFallVolume"));
 		fallSound.deleteWhenFinished();
 		fallPoints = -resource.getInt("fallPoints");
@@ -47,7 +43,13 @@ public class Present extends ImageSprite {
 	}
 	
 	@Override
-	public void start(int time) { }
+	public void start(int time) {
+		makeBody(resource);
+		
+		float xVel = resource.getFloat("presentXVel");
+		float yVel = resource.getFloat("presentYVel");
+		body.setLinearVelocity(new Vec2(xVel, yVel));
+	}
 
 	@Override
 	public void think(int currentTime, int elapsedTime) {
