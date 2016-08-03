@@ -12,6 +12,8 @@ public class MainGameInitializer{
 		float screenWidth = game.getCanvasWidth();
 		float screenHeight = game.getCanvasHeight();
 		
+		initBox2d(game, runner, box2d);
+		
 		addReindeer(game, runner, group, box2d, screenWidth, screenHeight);
 		
 		BackgroundImage background =
@@ -31,8 +33,6 @@ public class MainGameInitializer{
 		runner.addObject(houses);
 		group.addSprite(houses);
 		game.setHouses(houses);
-		
-		initBox2d(game, runner, box2d);
 	}
 	
 	

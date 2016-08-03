@@ -17,6 +17,7 @@ import engine.sound.Sound;
 public class Chimney extends ImageSprite {
 	private final ChristmasGame game;
 	private final Box2DProcessing box2d;
+	private final GameRunner runner;
 	private Body body;
 	private boolean move;
 	
@@ -95,12 +96,21 @@ public class Chimney extends ImageSprite {
 			ChristmasGame game) {
 		super(runner.getResources().getImage("chimney"),
 				runner.getResources().getFloat("chimneyScale"));
-		ResourceManager resource = runner.getResources();
+		this.runner = runner;
 		this.box2d = box2d;
 		this.game = game;
+	}
+	
+	@Override
+	public void start(int time) {
+		// Physics initialization is in start() instead of constructor.
+		// Chimneys are the first physics objects created and if they attempt
+		// to initialize themselves before Box2d has fully initialized, strange
+		// things will happen, like chimneys moving much slower than houses.
+		
+		ResourceManager resource = runner.getResources();
 		
 		x = game.getCanvasWidth() + getWidth();
-		
 		y = game.getHouses().getTopY()
 				- getHeight() / 2 + resource.getFloat("chimneyYOffset");
 		
@@ -114,10 +124,8 @@ public class Chimney extends ImageSprite {
 		
 		//above presents
 		layer = 6;
+		
 	}
-	
-	@Override
-	public void start(int time) { }
 	
 	@Override
 	public void think(int currentTime, int elapsedTime) {
