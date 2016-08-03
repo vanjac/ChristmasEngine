@@ -1,5 +1,7 @@
 package christmas;
 
+import java.util.Collection;
+
 import engine.*;
 import engine.graphics.Effect;
 import processing.core.PGraphics;
@@ -40,8 +42,9 @@ public class Rain implements Effect {
 	}
 	
 	@Override
-	public void update() {
+	public Collection<GameObject> update() {
 		frame = nextFrame;
+		return null;
 	}
 	
 	@Override

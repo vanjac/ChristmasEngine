@@ -37,7 +37,7 @@ public abstract class SpriteGroup extends PositionableSprite {
 		public void think(int currentTime, int elapsedTime) { }
 		
 		@Override
-		public void update() { }
+		public Collection<GameObject> update() { return null; }
 		
 		@Override
 		public boolean readyToDelete() {
@@ -91,12 +91,16 @@ public abstract class SpriteGroup extends PositionableSprite {
 	}
 	
 	@Override
-	public void update() {
-		super.update();
+	public Collection<GameObject> update() {
+		Collection<GameObject> updated = super.update();
 		effects.addAll(effectsToAdd);
 		effects.removeAll(effectsToRemove);
 		effectsToAdd.clear();
 		effectsToRemove.clear();
+		if(updated != null)
+			return updated;
+		else
+			return null;
 	}
 	
 	public void addEffect(Effect e) {

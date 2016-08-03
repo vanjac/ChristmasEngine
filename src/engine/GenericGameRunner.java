@@ -18,7 +18,6 @@ public class GenericGameRunner implements GameRunner {
 	private final Set<GameObject> objects;
 	private final Set<GameObject> objectsToAdd;
 	private final Set<GameObject> objectsToRemove;
-	private final Set<GameObject> objectsToStart;
 	private long lastSystemTime;
 	private int currentGameTime;
 	private float speed;
@@ -27,7 +26,6 @@ public class GenericGameRunner implements GameRunner {
 		objects = new HashSet<>();
 		objectsToAdd = new HashSet<>();
 		objectsToRemove = new HashSet<>();
-		objectsToStart = new HashSet<>();
 		resourceManager = resources;
 		this.applet = applet;
 		speed = 1;
@@ -108,7 +106,6 @@ public class GenericGameRunner implements GameRunner {
 	public void clearAll() {
 		objectsToAdd.clear();
 		objectsToRemove.clear();
-		objectsToStart.clear();
 		objects.clear();
 	}
 	
@@ -129,21 +126,10 @@ public class GenericGameRunner implements GameRunner {
 			if(o.readyToDelete())
 				removeObject(o);
 		}
+		
 		//remove objects
 		objects.removeAll(objectsToRemove);
 		objectsToRemove.clear();
-		
-		//add
-		//add new objects
-		for(GameObject o : objectsToAdd) {
-			objects.add(o);
-			objectsToStart.add(o);
-		}
-		objectsToAdd.clear();
-		for(GameObject o : objectsToStart) {
-			o.start(time);
-		}
-		objectsToStart.clear();
 		
 		//think
 		for(GameObject o : objects) {
@@ -151,8 +137,37 @@ public class GenericGameRunner implements GameRunner {
 		}
 		
 		//update
-		for(GameObject o : objects) {
-			o.update();
+		Set<GameObject> objectsToUpdate = new HashSet<>();
+		Set<GameObject> update = new HashSet<>(objects);
+		
+		while(!(update.isEmpty() && objectsToAdd.isEmpty()
+				&& objectsToRemove.isEmpty())) {
+			//remove objects
+			objects.removeAll(objectsToRemove);
+			objectsToRemove.clear();
+			
+			//add
+			//add new objects
+			HashSet<GameObject> objectsToStart = new HashSet<>();
+			for(GameObject o : objectsToAdd) {
+				objects.add(o);
+				objectsToStart.add(o);
+			}
+			objectsToAdd.clear();
+			for(GameObject o : objectsToStart) {
+				o.start(time);
+				o.think(time, elapsedTime);
+				update.add(o);
+			}
+			
+			for(GameObject o : update) {
+				Collection<GameObject> add = o.update();
+				if(add != null)
+					objectsToUpdate.addAll(add);
+			}
+			
+			update = new HashSet<>(objectsToUpdate);
+			objectsToUpdate = new HashSet<>();
 		}
 		
 		currentGameTime += elapsedTime;

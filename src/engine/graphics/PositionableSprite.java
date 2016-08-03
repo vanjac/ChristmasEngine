@@ -1,5 +1,9 @@
 package engine.graphics;
 
+import java.util.Collection;
+
+import engine.GameObject;
+
 /**
  * A sprite with implementations for many of the values in the Sprite interface.
  * These values are safely updated in the "update" step.
@@ -55,8 +59,9 @@ public abstract class PositionableSprite implements Sprite {
 	}
 	
 	@Override
-	public void update() {
+	public Collection<GameObject> update() {
 		shiftNextValuesToCurrent();
+		return null;
 	}
 	
 	protected void delete() {

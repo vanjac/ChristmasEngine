@@ -1,5 +1,7 @@
 package christmas;
 
+import java.util.Collection;
+
 import engine.*;
 import engine.graphics.*;
 
@@ -60,10 +62,14 @@ public class Reindeer extends ImageSprite {
 	}
 	
 	@Override
-	public void update() {
-		super.update();
+	public Collection<GameObject> update() {
+		Collection<GameObject> updated = super.update();
 		if(isDead) {
 			game.die();
 		}
+		if(updated != null)
+			return updated;
+		else
+			return null;
 	}
 }

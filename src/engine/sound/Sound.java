@@ -3,6 +3,7 @@ package engine.sound;
 import engine.*;
 import processing.sound.*;
 import java.nio.file.*;
+import java.util.Collection;
 
 /**
  * A wrapper for SoundFile, providing more control and bug fixes.
@@ -58,7 +59,7 @@ public class Sound implements GameObject {
 	}
 
 	@Override
-	public void update() {
+	public Collection<GameObject> update() {
 		cDelete = delete;
 		
 		//if at the end of the SoundFile
@@ -77,6 +78,7 @@ public class Sound implements GameObject {
 			}
 		}
 		
+		return null;
 	}
 
 	@Override

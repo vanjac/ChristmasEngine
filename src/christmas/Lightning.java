@@ -28,7 +28,7 @@ public class Lightning implements Effect {
 	public void think(int currentTime, int elapsedTime) { }
 	
 	@Override
-	public void update() { }
+	public Collection<GameObject> update() { return null; }
 	
 	@Override
 	public boolean readyToDelete() {

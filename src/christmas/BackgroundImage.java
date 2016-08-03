@@ -1,5 +1,7 @@
 package christmas;
 
+import java.util.Collection;
+
 import engine.*;
 import engine.graphics.Effect;
 import processing.core.*;
@@ -35,7 +37,7 @@ public class BackgroundImage implements Effect {
 	}
 	
 	@Override
-	public void update() { }
+	public Collection<GameObject> update() { return null; }
 	
 	@Override
 	public boolean readyToDelete() {

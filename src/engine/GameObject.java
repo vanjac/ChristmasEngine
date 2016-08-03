@@ -1,5 +1,7 @@
 package engine;
 
+import java.util.Collection;
+
 public interface GameObject {
 	/**
 	 * Called once after the object is created, and before its first think()
@@ -20,8 +22,9 @@ public interface GameObject {
 	 * Update the values of the object. At this point, the object shouldn't look
 	 * at the values of any other objects, because only some of them will have
 	 * updated.
+	 * @return a list of GameObjects that will need to be updated again, or null
 	 */
-	void update();
+	Collection<GameObject> update();
 	
 	/**
 	 * Return true if this object is "dead" and ready to be deleted.
