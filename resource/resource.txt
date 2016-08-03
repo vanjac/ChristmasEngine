@@ -103,4 +103,4 @@ n maxChimneyDelay			3.0
 n presentPoints				100
 n fallPoints				50
 n speedRoundPoints			750
-n narwhalModePoints			1500
+n narwhalModePoints			1250

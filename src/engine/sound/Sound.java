@@ -234,10 +234,14 @@ public class Sound implements GameObject {
 	 * 1 is normal speed, 2 is twice as fast, 0.5 is twice as slow, etc.
 	 */
 	public void setRate(float rate) {
-		float time = getTime();
-		sound.rate(rate);
-		this.rate = rate;
-		jump(time); // sometimes setting the rate of a sound can restart it
+		// don't need to jump if it won't change anything.
+		// jumping causes short breaks in the sound so it should be avoided.
+		if(rate != this.rate) {
+			float time = getTime();
+			sound.rate(rate);
+			this.rate = rate;
+			jump(time); // sometimes setting the rate of a sound can restart it
+		}
 	}
 	
 	/**
