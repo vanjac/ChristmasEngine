@@ -156,6 +156,13 @@ public abstract class GameApplet extends PApplet {
 			devMode(true);
 		canvasWidth = 1;
 		canvasHeight = 1;
+		
+		// draw "..." loading symbol
+		background(0);
+		float dotSize = 12;
+		ellipse(width/2 - 32, height/2, dotSize, dotSize);
+		ellipse(width/2, height/2, dotSize, dotSize);
+		ellipse(width/2 + 32, height/2, dotSize, dotSize);
 	}
 	
 	@Override

@@ -167,8 +167,6 @@ public class ChristmasGame extends GameApplet {
 	@Override
 	public void setup() {
 		super.setup();
-		splashScreen = loadImage(RESOURCE_DIRECTORY .resolve("splashScreen.png")
-				.toString());
 		chimneys = new ArrayList<>();
 		setCanvas(1920, 1080);
 	}
@@ -253,6 +251,10 @@ public class ChristmasGame extends GameApplet {
 		
 		switch (currentScreen) {
 		case START:
+			if(splashScreen == null)
+				splashScreen = loadImage(
+						RESOURCE_DIRECTORY.resolve("splashScreen.png")
+						.toString());
 			image(splashScreen, 0, 0, getCanvasWidth(), getCanvasHeight());
 			// loads the fonts so they will be ready
 			textSize(36);
