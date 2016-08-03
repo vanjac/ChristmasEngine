@@ -21,6 +21,7 @@ public class GenericGameRunner implements GameRunner {
 	private long lastSystemTime;
 	private int currentGameTime;
 	private float speed;
+	private boolean speedChanged;
 	
 	public GenericGameRunner(GameApplet applet, ResourceManager resources) {
 		objects = new HashSet<>();
@@ -29,6 +30,7 @@ public class GenericGameRunner implements GameRunner {
 		resourceManager = resources;
 		this.applet = applet;
 		speed = 1;
+		speedChanged = true;
 	}
 	
 	@Override
@@ -60,6 +62,7 @@ public class GenericGameRunner implements GameRunner {
 	@Override
 	public void setSpeed(float speed) {
 		this.speed = speed;
+		speedChanged = true;
 	}
 	
 	@Override
@@ -131,6 +134,13 @@ public class GenericGameRunner implements GameRunner {
 		objects.removeAll(objectsToRemove);
 		objectsToRemove.clear();
 		
+		if(speedChanged) {
+			speedChanged = false;
+			for(GameObject o : objects) {
+				o.speedChange(speed);
+			}
+		}
+		
 		//think
 		for(GameObject o : objects) {
 			o.think(time, elapsedTime);
@@ -156,6 +166,7 @@ public class GenericGameRunner implements GameRunner {
 			objectsToAdd.clear();
 			for(GameObject o : objectsToStart) {
 				o.start(time);
+				o.speedChange(speed);
 				o.think(time, elapsedTime);
 				update.add(o);
 			}

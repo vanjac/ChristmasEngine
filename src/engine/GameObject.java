@@ -31,4 +31,10 @@ public interface GameObject {
 	 * @return if this object should be deleted.
 	 */
 	boolean readyToDelete();
+	
+	/**
+	 * Called when the speed of the simulation is changed.
+	 * @param speed the number of game seconds per real-world second
+	 */
+	default void speedChange(float speed) { }
 }

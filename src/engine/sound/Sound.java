@@ -172,8 +172,10 @@ public class Sound implements GameObject {
 	}
 	
 	public void setRate(float rate) {
+		float time = getTime();
 		sound.rate(rate);
 		this.rate = rate;
+		jump(time); // sometimes setting the rate of a sound can restart it
 	}
 	
 	public float getRate() {

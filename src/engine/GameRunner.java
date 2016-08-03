@@ -42,7 +42,8 @@ public interface GameRunner {
 	
 	/**
 	 * Set the speed of the simulation.
-	 * @param speed the speed of time. 1 is normal speed, 2 is twice as fast
+	 * @param speed the speed of time. 1 is normal speed, 2 is twice as fast,
+	 * etc.
 	 */
 	public void setSpeed(float speed);
 	
