@@ -1,5 +1,7 @@
 # ChristmasEngine
-A 2d game engine with an example game (`christmas.ChristmasGame`). The game was created last christmas as a joke. It uses the [Processing](processing.org) core libraries, as well as the `sound` and `Box2d` libraries for Processing.
+A game engine with 2d graphics, audio, support for changing game speed, and other useful utilities. The engine comes with with an example game (`christmas.ChristmasGame`), which was created last christmas as a joke. The game uses Box2d for physics, which is currently not integrated into the engine.
+
+ChristmasEngine should be compiled with Eclipse. It comes with the [Processing](processing.org) core libraries, as well as the `sound` and `Box2d` libraries for Processing.
 
 ## Command line arguments:
 The first argument must be a path to the `resource` directory. After that, the following arguments are possible:

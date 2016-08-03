@@ -14,8 +14,8 @@ import processing.core.*;
  *
  */
 public abstract class GameApplet extends PApplet {
-	public static final int ENGINE_VERSION_MAJOR = 1;
-	public static final int ENGINE_VERSION_MINOR = -1;
+	public static final int ENGINE_VERSION_MAJOR = 0;
+	public static final int ENGINE_VERSION_MINOR = 0;
 	public static final int ENGINE_VERSION_REVISION = 0;
 	private static final String STARTUP_MESSAGE =
 			"..:: ChristmasEngine ::..\nDesigned by Jacob van't Hoog";
