@@ -57,12 +57,13 @@ public class ChristmasGame extends GameApplet {
 	boolean jumpWasPressed;
 
 	public static void main(String[] args) {
+		if(args.length < 1) {
+			System.err.println("Please specify the resource directory.");
+		}
 		RESOURCE_DIRECTORY = Paths.get(args[0]);
 		CONFIG_FILE = Paths.get(args[0], CONFIG_FILE_NAME);
 		
-		GameApplet.startApplet(args, ChristmasGame.class,
-				1, 1, true, //fullscreen ignores the specified screen size
-				PApplet.P2D, 0); // P2D renderer, no smoothing
+		GameApplet.startApplet(args, ChristmasGame.class);
 	}
 
 	protected void setMainReindeer(Reindeer deer) {

@@ -1,5 +1,7 @@
 package engine;
 
+import java.awt.Toolkit;
+import java.awt.Dimension;
 import java.nio.file.*;
 
 import engine.graphics.*;
@@ -57,27 +59,50 @@ public abstract class GameApplet extends PApplet {
 	 * hardware.
 	 */
 	public static void startApplet(String[] args,
-			Class<? extends GameApplet> appletClass,
-			int _xRes, int _yRes, boolean _fullScreen, String _renderer,
-			int _smooth) {
+			Class<? extends GameApplet> appletClass) {
 		System.out.println(STARTUP_MESSAGE);
 		System.out.println("v" + ENGINE_VERSION_MAJOR
 				+ "." + ENGINE_VERSION_MINOR
 				+ "." + ENGINE_VERSION_REVISION
 				+ "\n\n");
 		
-		for(int i = 1; i < args.length; i++) {
-			String s = args[i];
-			s = s.trim().toLowerCase();
-			if(s.equals("-dev"))
-				startInDevMode = true;
-		}
+		Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
+		xRes = (int)screenSize.getWidth();
+		yRes = (int)screenSize.getHeight();
+		fullScreen = true;
+		renderer = PApplet.P2D;
+		smooth = 0;
 		
-		xRes = _xRes;
-		yRes = _yRes;
-		fullScreen = _fullScreen;
-		renderer = _renderer;
-		smooth = _smooth;
+		for(int i = 1; i < args.length; i++) {
+			String s = args[i].trim().toLowerCase();
+			String value = "";
+			if(i + 1 < args.length)
+				value = args[i+1].trim();
+			
+			if(s.equals("-dev")) {
+				startInDevMode = true;
+			} else if(s.equals("-xres")) {
+				xRes = Integer.parseInt(value);
+				i += 1;
+			} else if(s.equals("-yres")) {
+				yRes = Integer.parseInt(value);
+				i += 1;
+			} else if(s.equals("-window")) {
+				fullScreen = false;
+			} else if(s.equals("-fullscreen")) {
+				fullScreen = true;
+			} else if(s.equals("-smooth")) {
+				smooth = Integer.parseInt(value);
+				i += 1;
+			} else if(s.equals("-software")) {
+				renderer = null;
+			} else if(s.equals("-gl")) {
+				renderer = value;
+				i += 1;
+			} else {
+				System.err.println("WARNING: Unknown argument " + s);
+			}
+		}
 		
 		PApplet.main(appletClass.getName());
 	}
