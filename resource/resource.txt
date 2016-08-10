@@ -55,7 +55,7 @@ i house11					house/house12.png
 
 # Sounds
 
-a mainMusic					Scheming Weasel slower.mp3
+a mainMusic					Scheming Weasel slower.wav
 n mainMusicVolume			1
 a santaSound				hohoho.wav
 n santaSoundVolume			0.6

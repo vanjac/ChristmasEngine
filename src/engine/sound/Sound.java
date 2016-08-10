@@ -1,35 +1,27 @@
 package engine.sound;
 
 import engine.*;
-import processing.sound.*;
 import java.nio.file.*;
 import java.util.Collection;
+import java.io.*;
+import javax.sound.sampled.*;
 
 /**
- * A wrapper for SoundFile, providing more control and hiding some of
- * SoundFile's strange bugs. Sound is NOT thread-safe!
+ * A wrapper for javax.sound.sampled.Clip.
  * Sounds add themselves to the GameRunner, so you don't have to.
  * @author jacob
  *
  */
 public class Sound implements GameObject {
-	private final GameRunner run;
-	
-	// documentation for SoundFile is here:
-	// https://processing.org/reference/libraries/sound/SoundFile.html
-	private final SoundFile sound;
+	private final Clip clip;
 	
 	private enum ActionWhenFinished {
 		STOP, LOOP, DELETE
 	}
 	
-	private final float duration;
-	
-	private float cueTime;
-	private int startTime;
-	private boolean isPlaying;
-	private float rate;
-	private float volume;
+	// one or the other of these might be supported
+	private final FloatControl gainControl;
+	private final FloatControl volumeControl;
 	private ActionWhenFinished finishedAction;
 	
 	private boolean delete, cDelete;
@@ -41,19 +33,37 @@ public class Sound implements GameObject {
 	 * @param file the path to the audio file
 	 */
 	public Sound(GameRunner runner, Path file) {
-		run = runner;
+		try {
+			AudioInputStream audioIn =
+					AudioSystem.getAudioInputStream(file.toFile());
+			// for some reason clips must be created in this way to prevent
+			// "Invalid format" errors
+			// see: http://stackoverflow.com/a/30833750
+			DataLine.Info info =
+					new DataLine.Info(Clip.class, audioIn.getFormat());
+	        clip = (Clip)AudioSystem.getLine(info);
+			clip.open(audioIn);
+		} catch (IOException|UnsupportedAudioFileException
+				|LineUnavailableException e) {
+			throw new IOError(e);
+		}
+		
 		runner.addObject(this);
-		sound = new SoundFile(runner.getApplet(), file.toString());
 		
 		delete = cDelete = false;
 		
-		duration = sound.duration();
+		if(clip.isControlSupported(FloatControl.Type.VOLUME)) {
+			volumeControl = (FloatControl)
+					clip.getControl(FloatControl.Type.VOLUME);
+			gainControl = null;
+		} else if(clip.isControlSupported(FloatControl.Type.MASTER_GAIN)) {
+			gainControl = (FloatControl)
+					clip.getControl(FloatControl.Type.MASTER_GAIN);
+			volumeControl = null;
+		} else {
+			throw new Error("Neither VOLUME nor MASTER_GAIN is supported!");
+		}
 		
-		cueTime = 0;
-		startTime = runner.getTime();
-		isPlaying = false;
-		rate = 1;
-		volume = 1;
 		finishedAction = ActionWhenFinished.STOP;
 	}
 
@@ -68,11 +78,10 @@ public class Sound implements GameObject {
 		cDelete = delete;
 		
 		//if at the end of the SoundFile
-		if(isPlaying && getTime() > duration) {
-			isPlaying = false;
+		if(isPlaying() && getTime() >= duration()) {
 			switch(finishedAction) {
 			case STOP:
-				cueTime = 0; //the next play() call will start at the beginning
+				stop(); //the next play() call will start at the beginning
 				break;
 			case DELETE:
 				delete();
@@ -103,10 +112,8 @@ public class Sound implements GameObject {
 	 * Start playing the sound at its current position.
 	 */
 	public void play() {
-		if(!isPlaying) {
-			startTime = run.getTime();
-			sound.jump(cueTime);
-			isPlaying = true;
+		if(!isPlaying()) {
+			clip.start();
 		}
 	}
 	
@@ -114,10 +121,8 @@ public class Sound implements GameObject {
 	 * Pause the sound at its current position.
 	 */
 	public void pause() {
-		if(isPlaying) {
-			cueTime = getTime();
-			sound.stop();
-			isPlaying = false;
+		if(isPlaying()) {
+			clip.stop();
 		}
 	}
 	
@@ -126,14 +131,14 @@ public class Sound implements GameObject {
 	 */
 	public void stop() {
 		pause();
-		cueTime = 0;
+		clip.setMicrosecondPosition(0);
 	}
 	
 	/**
 	 * Jump to the beginning and start playing.
 	 */
 	public void restart() {
-		cueTime = 0;
+		clip.setMicrosecondPosition(0);
 		play();
 	}
 	
@@ -142,7 +147,7 @@ public class Sound implements GameObject {
 	 * Otherwise do nothing.
 	 */
 	public void restartIfStopped() {
-		if(!isPlaying) {
+		if(!isPlaying()) {
 			restart();
 		}
 	}
@@ -152,7 +157,7 @@ public class Sound implements GameObject {
 	 * @return true if the sound is playing
 	 */
 	public boolean isPlaying() {
-		return isPlaying;
+		return clip.isRunning();
 	}
 	
 	/**
@@ -192,11 +197,7 @@ public class Sound implements GameObject {
 	 * @return the position, in seconds
 	 */
 	public float getTime() {
-		if(isPlaying) {
-			return (float)(run.getTime() - startTime) / 1000.0f * rate;
-		} else {
-			return cueTime;
-		}
+		return (float)clip.getMicrosecondPosition() / 1000.0f;
 	}
 	
 	/**
@@ -205,10 +206,10 @@ public class Sound implements GameObject {
 	 * @param time the position, in seconds
 	 */
 	public void jump(float time) {
-		cueTime = time;
-		if(isPlaying) {
-			startTime = run.getTime() - (int)(time / rate * 1000);
-			sound.jump(time);
+		clip.setMicrosecondPosition((long)(time * 1000.0));
+		if(isPlaying()) {
+			clip.stop();
+			clip.start();
 		}
 	}
 	
@@ -218,7 +219,7 @@ public class Sound implements GameObject {
 	 * @return the length of the sound in seconds
 	 */
 	public float duration() {
-		return duration;
+		return (float)clip.getMicrosecondLength() / 1000.0f;
 	}
 	
 	/**
@@ -229,19 +230,12 @@ public class Sound implements GameObject {
 	}
 	
 	/**
-	 * Set the playback rate of the sound.
+	 * Set the playback rate of the sound. NOT SUPPORTED!
 	 * @param rate the number of sound seconds played per game-time second.
 	 * 1 is normal speed, 2 is twice as fast, 0.5 is twice as slow, etc.
 	 */
 	public void setRate(float rate) {
-		// don't need to jump if it won't change anything.
-		// jumping causes short breaks in the sound so it should be avoided.
-		if(rate != this.rate) {
-			float time = getTime();
-			sound.rate(rate);
-			this.rate = rate;
-			jump(time); // sometimes setting the rate of a sound can restart it
-		}
+		; // not supported
 	}
 	
 	/**
@@ -250,7 +244,7 @@ public class Sound implements GameObject {
 	 * 1 is normal speed, 2 is twice as fast, 0.5 is twice as slow, etc.
 	 */
 	public float getRate() {
-		return rate;
+		return 1.0f;
 	}
 	
 	/**
@@ -258,8 +252,12 @@ public class Sound implements GameObject {
 	 * @param volume the volume; must be 0.0 to 1.0 (silent to full volume).
 	 */
 	public void setVolume(float volume) {
-		sound.amp(volume);
-		this.volume = volume;
+		if(gainControl != null) {
+			float dB = (float) (Math.log10(volume) * 20.0);
+			gainControl.setValue(dB);
+		} else {
+			volumeControl.setValue(volume * 65536.0f);
+		}
 	}
 	
 	/**
@@ -267,15 +265,11 @@ public class Sound implements GameObject {
 	 * @return the volume, from 0.0 to 1.0 (silent to full volume).
 	 */
 	public float getVolume() {
-		return volume;
-	}
-	
-	/**
-	 * For Mono files only: move the sound in a stereo panorama.
-	 * @param pan the panoramic position: -1.0 is the left channel, 1.0 is the
-	 * right channel, 0.0 plays equally in both channels.
-	 */
-	public void pan(float pan) {
-		sound.pan(pan);
+		if(gainControl != null) {
+			float dB = gainControl.getValue();
+			return (float)Math.pow(10.0, (dB / 20.0));
+		} else {
+			return volumeControl.getValue() / 65536.0f;
+		}
 	}
 }
