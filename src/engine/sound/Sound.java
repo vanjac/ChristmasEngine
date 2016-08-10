@@ -20,6 +20,8 @@ public class Sound implements GameObject {
 	}
 	
 	// one or the other of these might be supported
+	private boolean isPlaying;
+	private final float duration;
 	private final FloatControl gainControl;
 	private final FloatControl volumeControl;
 	private ActionWhenFinished finishedAction;
@@ -43,6 +45,7 @@ public class Sound implements GameObject {
 					new DataLine.Info(Clip.class, audioIn.getFormat());
 	        clip = (Clip)AudioSystem.getLine(info);
 			clip.open(audioIn);
+			
 		} catch (IOException|UnsupportedAudioFileException
 				|LineUnavailableException e) {
 			throw new IOError(e);
@@ -63,6 +66,9 @@ public class Sound implements GameObject {
 		} else {
 			throw new Error("Neither VOLUME nor MASTER_GAIN is supported!");
 		}
+		
+		isPlaying = false;
+		duration = (float)clip.getMicrosecondLength() / 1000.0f;
 		
 		finishedAction = ActionWhenFinished.STOP;
 	}
@@ -113,6 +119,7 @@ public class Sound implements GameObject {
 	 */
 	public void play() {
 		if(!isPlaying()) {
+			isPlaying = true;
 			clip.start();
 		}
 	}
@@ -122,6 +129,7 @@ public class Sound implements GameObject {
 	 */
 	public void pause() {
 		if(isPlaying()) {
+			isPlaying = false;
 			clip.stop();
 		}
 	}
@@ -157,7 +165,7 @@ public class Sound implements GameObject {
 	 * @return true if the sound is playing
 	 */
 	public boolean isPlaying() {
-		return clip.isRunning();
+		return isPlaying;
 	}
 	
 	/**
@@ -206,6 +214,7 @@ public class Sound implements GameObject {
 	 * @param time the position, in seconds
 	 */
 	public void jump(float time) {
+		System.out.println("Jump!");
 		clip.setMicrosecondPosition((long)(time * 1000.0));
 		if(isPlaying()) {
 			clip.stop();
@@ -219,7 +228,7 @@ public class Sound implements GameObject {
 	 * @return the length of the sound in seconds
 	 */
 	public float duration() {
-		return (float)clip.getMicrosecondLength() / 1000.0f;
+		return duration;
 	}
 	
 	/**
